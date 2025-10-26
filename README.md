@@ -55,7 +55,7 @@ For local development or manual installation:
 2. Open Chrome and go to `chrome://extensions/`.  
 3. Enable **Developer Mode** in the top right corner.  
 4. Click **Load unpacked** and select your **ToastKit** folder.  
-5. The <img src="images/toast48.png" alt="ToastKit icon" width="20" style="vertical-align: text-bottom;"> ToastKit icon will appear in your toolbar.
+5. The <img src="icons/toast48.png" alt="ToastKit icon" width="20" style="vertical-align: text-bottom;"> ToastKit icon will appear in your toolbar.
 
 ---
 
