@@ -1,0 +1,282 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ToastKit</title>
+    <style>
+      :root{
+        --bg:#f8fafc; --card:#fff; --ink:#0f172a; --muted:#475569;
+        --border:#e2e8f0; --blue:#2563eb; --blue-d:#1d4ed8; --pill:#e6f0ff;
+      }
+      html,body{
+        margin:0; padding:0;
+        background:var(--bg); color:var(--ink);
+        font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      }
+      .wrap{ width:560px; padding:12px; }
+      .card{
+        background:var(--card);
+        border:1px solid var(--border);
+        border-radius:12px;
+        padding:10px;
+        box-shadow:0 1px 8px rgba(0,0,0,.04);
+      }
+
+      .grid{
+        display:grid;
+        grid-template-columns: 1fr 220px;
+        gap:12px;
+        align-items:start;
+      }
+
+      /* header */
+      .hdr{
+        display:flex;
+        align-items:baseline;
+        gap:20px;
+        margin-bottom:4px;
+      }
+      #brandLogo{
+        height:52px !important;
+        max-width:100%;
+        object-fit:contain;
+      }
+
+      .stats{
+        margin:6px 0 10px;
+        line-height:1.45;
+        font-size:12px;
+      }
+      .stats strong{
+        font-weight:700;
+      }
+
+      fieldset{
+        border:1px solid var(--border);
+        border-radius:10px;
+        padding:10px;
+        margin:10px 0;
+      }
+      legend{
+        font-size:12px;
+        color:var(--muted);
+      }
+      .sectionTitle{
+        font-weight:700;
+        font-size:13px;
+        color:#111827;
+      }
+      .row{
+        display:flex;
+        gap:8px;
+        align-items:center;
+        margin:6px 0;
+      }
+      .col{
+        display:grid;
+        gap:8px;
+      }
+      input[type="radio"],input[type="checkbox"]{
+        width:14px; height:14px;
+      }
+      .hint{
+        font-size:12px;
+        color:var(--muted);
+      }
+
+      .actions{
+        display:flex;
+        gap:8px;
+        margin-top:8px;
+      }
+      .btn{
+        width:100%;
+        padding:12px;
+        border:0;
+        border-radius:10px;
+        font-weight:800;
+        letter-spacing:.2px;
+        color:#fff;
+        background:var(--blue);
+        cursor:pointer;
+        transition:background .15s;
+        font-size:13px;
+      }
+      .btn:hover{ background:var(--blue-d); }
+      .btn:disabled{ opacity:.6; cursor:default; }
+      .secondary{
+        background:transparent;
+        color:var(--ink);
+        border:1px solid var(--border);
+        padding:10px;
+        border-radius:10px;
+        cursor:pointer;
+        font-size:12px;
+      }
+      .secondary:hover{ border-color:#cbd5e1; }
+
+      /* footer bar */
+      .footerbar{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        border-top:1px solid var(--border);
+        padding:8px 6px 4px;
+        margin-top:6px;
+      }
+      .footerbar .spacer{ flex:1; }
+      .linkbtn{
+        appearance:none;
+        border:1px solid var(--border);
+        background:#fff;
+        font-size:12px;
+        padding:6px 10px;
+        border-radius:8px;
+        cursor:pointer;
+      }
+     .linkbtn:hover {
+  border-color: #cbd5e1;
+}
+.ver {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Toasted badge styling */
+.badge-flame {
+  display: inline-block;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 2px 6px;
+  margin-right: 6px;
+  vertical-align: middle;
+  animation: toastPulse 1s ease-in-out;
+}
+
+/* Pulse animation for Toasted badge */
+@keyframes toastPulse {
+  0% {
+    background: #f97316;
+    color: white;
+  }
+  100% {
+    background: #fee2e2;
+    color: #b91c1c;
+  } 
+}
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+
+        <!-- HEADER (logo row) -->
+        <div class="hdr">
+          <img
+            id="brandLogo"
+            src="images/toastkit_sidebar_logo.png"
+            alt="ToastKit by YvonLabs"
+          >
+        </div>
+
+        <!-- STATUS / STATS (this is where Cleaned: ... shows up) -->
+        <div id="stats" class="stats"></div>
+
+        <div class="grid">
+          <!-- LEFT COLUMN -->
+          <main>
+            <fieldset>
+              <legend class="sectionTitle">Toast level</legend>
+              <div class="col" id="levels">
+                <label class="row">
+                  <input type="radio" name="level" value="light" checked>
+                  Light — cookies only
+                </label>
+                <label class="row">
+                  <input type="radio" name="level" value="medium">
+                  Medium — cookies + storage
+                </label>
+                <label class="row">
+                  <input type="radio" name="level" value="dark">
+                  Dark — cookies + storage + service workers + permissions
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend class="sectionTitle">Scope</legend>
+              <div class="col">
+                <label class="row">
+                  <input type="radio" name="scope" value="origin" checked>
+                  Current site only
+                </label>
+                <label class="row">
+                  <input type="radio" name="scope" value="family">
+                  This site + all subdomains (may sign you out)
+                </label>
+                <div id="cookiePreview" class="hint">
+                  <!-- this used to say "extensions: 0 cookies..." -->
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="actions">
+              <button id="run" class="btn">TOAST THIS SITE</button>
+              <button
+                id="siteSettings"
+                class="secondary"
+                title="Open Chrome site settings"
+              >
+                Open Chrome site settings
+              </button>
+            </div>
+          </main>
+
+          <!-- RIGHT COLUMN -->
+          <aside>
+            <fieldset>
+              <legend class="sectionTitle">Advanced</legend>
+              <div class="col">
+                <label class="row">
+                  <input id="optCookies" type="checkbox" checked>
+                  Cookies
+                </label>
+                <label class="row">
+                  <input id="optStorage" type="checkbox">
+                  LocalStorage, IndexedDB, Cache Storage
+                </label>
+                <label class="row">
+                  <input id="optSW" type="checkbox">
+                  Service workers
+                </label>
+                <label class="row">
+                  <input id="optPerms" type="checkbox">
+                  Ask again for location / camera / mic / notifications
+                </label>
+                <label class="row">
+                  <input id="optReload" type="checkbox">
+                  Reload tab after reset
+                </label>
+              </div>
+            </fieldset>
+          </aside>
+        </div>
+
+        <!-- FOOTER BAR -->
+        <div class="footerbar">
+          <span class="ver" id="versionLabel"></span>
+          <span class="spacer"></span>
+          <button class="linkbtn" id="footerReport">Report bug</button>
+          <button class="linkbtn" id="footerWebsite">Website</button>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
