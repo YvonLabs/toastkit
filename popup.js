@@ -153,15 +153,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Example final line:
         // Level: medium · Wiped: cookies (12/12), storage · scope: this site + subdomains · Tab reloaded
+        function escapeHtml(str) {
+          return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+        }
         const summaryLine =
-          `Level: ${level} · Wiped: ${wipedSummary} · ${scopeLabel}` +
+          `Level: ${escapeHtml(level)} · Wiped: ${escapeHtml(wipedSummary)} · ${escapeHtml(scopeLabel)}` +
           (doReload ? " · Tab reloaded" : "");
 
         // Render status under the logo
         statsEl.innerHTML = `
           <div>
             <span class="badge-flame">Toasted</span>
-            <strong>Cleaned:</strong> ${resp.origin}
+            <strong>Cleaned:</strong> ${escapeHtml(resp.origin)}
           </div>
           <div class="hint">${summaryLine}</div>
         `;
