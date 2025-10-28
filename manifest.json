@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ToastKit",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Clear cookies, cache, storage, and permissions for the current site. Everything else in your browser stays untouched.",
   "permissions": [
     "browsingData",

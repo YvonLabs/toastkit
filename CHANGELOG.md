@@ -9,6 +9,14 @@ ToastKit uses semantic-style versioning during pre-1.0:
 
 ---
 
+## 0.2.1
+Security + hardening release
+
+- Escape/sanitize DOM output in popup to prevent untrusted HTML injection (fixes CodeQL alert).
+- No new permissions.
+- No telemetry, tracking, or remote calls added.
+- Recommended for Chrome Web Store submission / approval.
+
 ## [0.2.0] – 2025-10-26
 First public release.
 

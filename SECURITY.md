@@ -1,31 +1,50 @@
 # Security Policy
 
 ## Supported Versions
-ToastKit provides security updates for the most recent public release line and for the current development branch (`main`).  
+
+ToastKit ships security fixes for the current release line and the current development branch (`main`).  
 Older builds may still run, but they do not receive fixes or dependency updates.
 
-| Version      | Supported | Notes |
-|--------------|-----------|-------|
-| main         | ✅ Active | Ongoing development and hardening |
-| 0.2.x        | ✅ Public release line | First public release series (Chrome Web Store) |
-| ≤ 0.1.x      | ❌ Unsupported | Internal / experimental builds before public availability |
+| Version        | Supported | Notes |
+|---------------|-----------|-------|
+| 0.2.1          | ✅ Active | Latest hardening release (DOM sanitization, popup safety) |
+| main           | ✅ Active | In-development, reviewed before publishing to the store |
+| 0.2.0          | ⚠︎ Superseded | First public release; replaced by 0.2.1 for security reasons |
+| ≤ 0.1.x        | ❌ Unsupported | Internal / pre-release builds, not maintained |
 
-Security fixes will land in `main` first, and then be rolled into the next `0.2.x` patch release (for example `0.2.1`).
+Security fixes land in `main` first, and then are published as a patch release (for example `0.2.1`).  
+Once a new version is submitted / approved in the Chrome Web Store, that becomes the supported version.
+
+## What “security issue” means here
+
+ToastKit does not collect analytics, does not exfiltrate data, and does not call remote services.
+
+Security issues for this project usually mean:
+- A way the extension could expose or mis-handle data from a site you're cleaning
+- A way the popup UI could inject or render untrusted content
+- Anything that breaks the “only reset the current site / domain” scope
+- A permissions overreach or privilege escalation in the extension
+
+If you believe you’ve found one of these, please report it privately.
 
 ## Reporting a Vulnerability
-If you believe you’ve found a security or privacy issue (for example, data exposure, permission overreach, or domain isolation flaws), please **do not open a public issue**.
 
-Instead, email: **yvonlabs.plentiful987@passmail.net**
+Please **do not open a public GitHub issue** for potential security or privacy problems.
+
+Instead, email:
+**237143566+yvon-l@users.noreply.github.com**
 
 Include:
 - Steps to reproduce  
 - Expected behavior  
 - Actual behavior  
 - Browser + OS version  
-- ToastKit version (see extension details / manifest)
+- ToastKit version (`chrome://extensions` → Details)
 
-Reports will be acknowledged and reviewed in order of impact.
+You will get an acknowledgment. High-impact issues are prioritized first.
 
-## Handling
-Issues that affect user privacy, domain isolation, or data security are treated as high priority.  
-Validated fixes are released as patch updates (for example `0.2.1`) and published to the Chrome Web Store.
+## Patch and Disclosure
+
+Validated fixes are released as patch updates (for example `0.2.1`) and submitted to the Chrome Web Store.
+
+If a report results in a user-facing change that matters for safety or privacy, that change will be mentioned in the public changelog / release notes for that version.
