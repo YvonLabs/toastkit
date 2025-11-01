@@ -1,40 +1,37 @@
 # Changelog
 
-All notable changes to ToastKit will be documented here.
+All notable changes to ToastKit are documented here.
 
 ToastKit uses semantic-style versioning during pre-1.0:
-- PATCH (0.2.1 → 0.2.2): bug fix or security fix
-- MINOR (0.2.0 → 0.3.0): new capability or behavior change
+- PATCH 0.2.1 → 0.2.2: bug fix or security fix
+- MINOR 0.2.x → 0.3.0: new capability or behavior change
 - 1.0.0: first fully stable line
 
 ---
 
-## 0.2.1
-Security + hardening release
+## [Unreleased]
+### Documentation
+- Linked to unified global privacy and security policies
+- Updated README, logo, and repo structure
+- No functional or release changes; extension remains at version 0.2.1
 
-- Escape/sanitize DOM output in popup to prevent untrusted HTML injection (fixes CodeQL alert).
-- No new permissions.
-- No telemetry, tracking, or remote calls added.
-- Recommended for Chrome Web Store submission / approval.
+### Changed
+- Updated logo and image references for consistency
+
+## [0.2.1] – 2025-10-28
+Security and hardening release
+- Escape and sanitize DOM output in popup to prevent untrusted HTML injection
+- No new permissions
+- No telemetry or remote calls
 
 ## [0.2.0] – 2025-10-26
-First public release.
-
-### Added
-- Targeted site reset for a single domain (or domain + subdomains).
-- Ability to clear: cookies, cache, localStorage, sessionStorage, service workers, and site permissions without wiping the entire browser.
-- Privacy policy and security contact.
-- Chrome Web Store submission build.
-
-### Notes
-- `0.2.x` is now the supported public line.
-- Earlier 0.1.x builds were internal/experimental and are not supported.
-
----
+First public release
+- Targeted site reset for a single domain or subdomains
+- Clear cookies, cache, localStorage, sessionStorage, service workers, and site permissions
+- Privacy policy and security contact
+- Chrome Web Store submission build
 
 ## [Unreleased]
-Planned / in development:
-- Improve visibility and configuration of the existing Quick Reset shortcut.
-- Local-only “favorite domains” option for people who repeatedly wipe the same test or staging environments.
-- Firefox build, to support users outside Chromium.
-- Small UX and wording refinements based on Chrome Web Store review and user trust feedback.
+- Firefox build target
+- Favorite domains list stored locally
+- Minor UX text refinements
