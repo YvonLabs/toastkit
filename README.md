@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/toastkit_sidebar_logo.png" alt="ToastKit logo" width="300"><br>
+  <img src="images/toastkit_logo.png" alt="ToastKit logo" width="300"><br>
   <b>ToastKit - reset one site, not your entire browser.</b><br>Clear cookies, cache, and storage for the site you're on.
 </p>
 
