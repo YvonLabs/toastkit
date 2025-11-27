@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="https://github.com/YvonLabs/toastkit/releases">
-    <img src="https://img.shields.io/badge/version-0.2.0-blue.svg?style=flat-square" alt="Version">
+    <img src="https://img.shields.io/badge/version-0.2.2-blue.svg?style=flat-square" alt="Version">
   </a>
   <a href="https://github.com/YvonLabs/toastkit/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-green.svg?style=flat-square" alt="License">
