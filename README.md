@@ -110,6 +110,13 @@ Follow updates and other projects from YvonLabs at
 
 ---
 
+### Support YvonLabs
+
+If you find ToastKit helpful, you can support future open-source tools:
+
+☕ https://buymeacoffee.com/yvonlabs
+
+
 <p align="center">
   <sub>Minimal • Fast • Focused © YvonLabs</sub>
 </p>
