@@ -4,25 +4,81 @@ document.addEventListener("DOMContentLoaded", () => {
   const versionLabel = document.getElementById("versionLabel");
   const siteSettingsBtn = document.getElementById("siteSettings");
 
-  // --- Advanced option checkboxes ---
+  // Advanced option checkboxes
   const optCookies = document.getElementById("optCookies");
   const optStorage = document.getElementById("optStorage");
   const optSW = document.getElementById("optSW");
   const optPerms = document.getElementById("optPerms");
   const optReload = document.getElementById("optReload");
 
-  // --- Toast level radios (Light / Medium / Dark) ---
+  // Toast level radios (Light / Medium / Dark)
   const levelRadios = document.querySelectorAll('input[name="level"]');
 
-  // --- Scope radios ("Current site only" vs "This site + all subdomains") ---
+  // Scope radios ("Current site only" vs "This site + all subdomains")
   const scopeRadios = document.querySelectorAll('input[name="scope"]');
 
-  // --- Footer buttons ---
+  // Footer buttons
   const footerReportBtn = document.getElementById("footerReport");
   const footerWebsiteBtn = document.getElementById("footerWebsite");
 
+  // Settings persistence
+  const SETTINGS_KEY = "toastkitSettings";
+
+  function getUiState() {
+    const level =
+      document.querySelector('input[name="level"]:checked')?.value || "light";
+
+    const scope =
+      document.querySelector('input[name="scope"]:checked')?.value || "origin";
+
+    return {
+      level,
+      scope,
+      optCookies: !!optCookies.checked,
+      optStorage: !!optStorage.checked,
+      optSW: !!optSW.checked,
+      optPerms: !!optPerms.checked,
+      optReload: !!optReload.checked
+    };
+  }
+
+  function setRadio(name, value) {
+    const el = document.querySelector(`input[name="${name}"][value="${value}"]`);
+    if (el) el.checked = true;
+  }
+
+  function applyUiState(state) {
+    if (!state) return;
+
+    if (state.level) setRadio("level", state.level);
+    if (state.scope) setRadio("scope", state.scope);
+
+    if (typeof state.optCookies === "boolean") optCookies.checked = state.optCookies;
+    if (typeof state.optStorage === "boolean") optStorage.checked = state.optStorage;
+    if (typeof state.optSW === "boolean") optSW.checked = state.optSW;
+    if (typeof state.optPerms === "boolean") optPerms.checked = state.optPerms;
+    if (typeof state.optReload === "boolean") optReload.checked = state.optReload;
+  }
+
+  async function loadSettings() {
+    try {
+      const res = await chrome.storage.sync.get([SETTINGS_KEY]);
+      return res && res[SETTINGS_KEY] ? res[SETTINGS_KEY] : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function saveSettings() {
+    try {
+      await chrome.storage.sync.set({ [SETTINGS_KEY]: getUiState() });
+    } catch (e) {
+      // ignore
+    }
+  }
+
   // -------------------------------------------------
-  // Level presets → they just set defaults in Advanced
+  // Level presets
   // -------------------------------------------------
   function applyLevelPreset(level) {
     if (level === "light") {
@@ -44,19 +100,45 @@ document.addEventListener("DOMContentLoaded", () => {
     // We intentionally do not touch optReload here.
   }
 
-  // When user clicks Light/Medium/Dark, update Advanced checkboxes.
+  // When user clicks Light/Medium/Dark, update Advanced checkboxes and persist
   levelRadios.forEach(r => {
-    r.addEventListener("change", () => {
+    r.addEventListener("change", async () => {
       if (r.checked) {
         applyLevelPreset(r.value);
+        await saveSettings();
       }
     });
   });
 
-  // Initialize Advanced checkboxes from whichever level starts checked.
-  const initialLevel =
-    document.querySelector('input[name="level"]:checked')?.value || "light";
-  applyLevelPreset(initialLevel);
+  // Persist when scope or any advanced option changes
+  scopeRadios.forEach(r => r.addEventListener("change", saveSettings));
+  [optCookies, optStorage, optSW, optPerms, optReload].forEach(el => {
+    el.addEventListener("change", saveSettings);
+  });
+
+  // Initialize UI
+  (async () => {
+    const saved = await loadSettings();
+
+    if (saved) {
+      applyUiState(saved);
+
+      // If level exists but advanced options are missing, enforce presets
+      const hasAnyAdvanced =
+        typeof saved.optCookies === "boolean" ||
+        typeof saved.optStorage === "boolean" ||
+        typeof saved.optSW === "boolean" ||
+        typeof saved.optPerms === "boolean";
+
+      if (!hasAnyAdvanced && saved.level) {
+        applyLevelPreset(saved.level);
+      }
+    } else {
+      const initialLevel =
+        document.querySelector('input[name="level"]:checked')?.value || "light";
+      applyLevelPreset(initialLevel);
+    }
+  })();
 
   // -------------------------------------------------
   // Version in footer
@@ -67,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // -------------------------------------------------
-  // "Open Chrome site settings" button (per-site permissions UI)
+  // Open Chrome site settings
   // -------------------------------------------------
   siteSettingsBtn.addEventListener("click", async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -88,13 +170,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const originalText = runBtn.textContent;
     runBtn.textContent = "Toasting...";
 
-    // Snapshot current user intent at click time.
+    // Save current intent at click time
+    await saveSettings();
+
     const level =
       document.querySelector('input[name="level"]:checked')?.value || "light";
 
     const scope =
       document.querySelector('input[name="scope"]:checked')?.value || "origin";
-      // "origin" (current site only) or "family" (this site + all subdomains)
+    // "origin" (current site only) or "family" (this site + all subdomains)
 
     const wipeCookies = optCookies.checked;
     const wipeStorage = optStorage.checked;
@@ -103,7 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const doReload = optReload.checked;
 
     try {
-      // Ask background.js to actually perform the wipe.
       const resp = await chrome.runtime.sendMessage({
         type: "RESET_NOW",
         payload: {
@@ -116,15 +199,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (resp && resp.ok) {
-        // Success
         runBtn.textContent = "Toasted ✓";
 
-        // Build human-readable detail string from what background actually did.
-        // resp.cookies: { ran, before, cleared }
-        // resp.storage: { ran, cleared }
-        // resp.serviceWorkers: { ran, cleared }
-        // resp.perms: { ran, reset }
-        // resp.scopeUsed: "origin" | "family"
         const detailParts = [];
 
         if (resp.cookies && resp.cookies.ran) {
@@ -142,17 +218,13 @@ document.addEventListener("DOMContentLoaded", () => {
           detailParts.push("permissions reset");
         }
 
-        const wipedSummary = detailParts.length
-          ? detailParts.join(", ")
-          : "cookies";
+        const wipedSummary = detailParts.length ? detailParts.join(", ") : "cookies";
 
         const scopeLabel =
           resp.scopeUsed === "family"
             ? "scope: this site + subdomains"
             : "scope: current site";
 
-        // Example final line:
-        // Level: medium · Wiped: cookies (12/12), storage · scope: this site + subdomains · Tab reloaded
         function escapeHtml(str) {
           return String(str)
             .replace(/&/g, "&amp;")
@@ -161,11 +233,11 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#39;");
         }
+
         const summaryLine =
           `Level: ${escapeHtml(level)} · Wiped: ${escapeHtml(wipedSummary)} · ${escapeHtml(scopeLabel)}` +
           (doReload ? " · Tab reloaded" : "");
 
-        // Render status under the logo
         statsEl.innerHTML = `
           <div>
             <span class="badge-flame">Toasted</span>
@@ -174,16 +246,13 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="hint">${summaryLine}</div>
         `;
 
-        // If "Reload tab after reset" is checked, reload the active tab now.
         if (doReload) {
           chrome.tabs.reload();
         }
       } else {
-        // Background responded with failure
         const msg = resp && resp.error ? resp.error : "Failed";
 
         if (msg.includes("Unsupported URL")) {
-          // chrome://, chrome-extension://, etc.
           runBtn.textContent = originalText;
           statsEl.innerHTML = `
             <div style="color:#dc2626;font-weight:600;">Unsupported URL</div>
@@ -197,7 +266,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     } catch (err) {
-      // sendMessage itself failed
       const msg = err && err.message ? err.message : "Failed";
       runBtn.textContent = "Error";
       statsEl.innerHTML = `
@@ -205,7 +273,6 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }
 
-    // Re-enable the button so they can run again / try another site.
     setTimeout(() => {
       runBtn.disabled = false;
       runBtn.textContent = originalText;
@@ -215,7 +282,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // -------------------------------------------------
   // Footer links
   // -------------------------------------------------
-
   const BUG_URL = "https://github.com/YvonLabs/toastkit/issues/new";
   const WEBSITE_URL = "https://yvonlabs.github.io/";
 

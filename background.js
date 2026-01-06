@@ -240,10 +240,10 @@ function showToastedIcon() {
   iconResetTimerId = setTimeout(() => {
     chrome.action.setIcon({
       path: {
-        "16":  "icons/toast16.png",
-        "32":  "icons/toast32.png",
-        "48":  "icons/toast48.png",
-        "128": "icons/toast128.png"
+        "16":  "icons/toastkit_16.png",
+        "32":  "icons/toastkit_32.png",
+        "48":  "icons/toastkit_48.png",
+        "128": "icons/toastkit_128.png"
       }
     });
     iconResetTimerId = null;
