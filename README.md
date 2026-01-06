@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="https://github.com/YvonLabs/toastkit/releases">
-    <img src="https://img.shields.io/badge/version-0.2.2-blue.svg?style=flat-square" alt="Version">
+    <img src="https://img.shields.io/badge/version-0.2.3-blue.svg?style=flat-square" alt="Version">
   </a>
   <a href="https://github.com/YvonLabs/toastkit/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-green.svg?style=flat-square" alt="License">
@@ -90,7 +90,7 @@ Licensed under the **MIT License**.
   - `chrome.cookies` - inspect or remove cookies  
   - `chrome.contentSettings` - reset site permissions (camera, mic, notifications)  
   - `chrome.storage` - save user preferences for what to reset  
-  - `chrome.tabs` / `chrome.activeTab` - detect the active site  
+  - `chrome.tabs` - identify the currently active site
   - `chrome.commands` - enable keyboard shortcuts (Alt + T)
 
 ---
